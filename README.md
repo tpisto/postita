@@ -15,7 +15,7 @@ Full library API documentation at: [http://tpisto.github.io/postita](http://tpis
 ES6 syntax. You can use [Babel](https://babeljs.io/) to already run ES6 syntax JS if your Node.js version doesn't support it yet.
  
 ```javascript
-let PostitaLib = require('index')
+let PostitaLib = require('postita')
 let fs = require('fs')
 
 // Init
