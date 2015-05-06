@@ -2,7 +2,7 @@
 
 **Postita.fi unofficial Node.js library.** The library enables Postita.fi users to automate their use of the services, such as sending mail and electronic invoices through Postita.fi. It also allows users to query their job queue status, status of individual jobs and account status.
 
-To send mail through Postita.fi, users canp simply upload a PDF file to the service. Postita.fi then prints the PDF file on A4 sized paper in black and white or in color, put it into a big-windowed C5 or C4 envelope and send it.
+To send mail through Postita.fi, users can simply upload a PDF file to the service. Postita.fi then prints the PDF file on A4 sized paper in black and white or in color, put it into a big-windowed C5 or C4 envelope and send it.
 
 API documentation: [http://tpisto.github.io/postita](http://tpisto.github.io/postita)
 
