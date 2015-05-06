@@ -4,6 +4,8 @@
 
 To send mail through Postita.fi, users canp simply upload a PDF file to the service. Postita.fi then prints the PDF file on A4 sized paper in black and white or in color, put it into a big-windowed C5 or C4 envelope and send it.
 
+API documentation: [http://tpisto.github.io/postita](http://tpisto.github.io/postita)
+
 ##Features
 * Supports all [Postita.fi REST API features](https://postita.fi/blog/fi/postita-http-api/).
 * Promise based
