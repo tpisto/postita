@@ -1,1 +1,1 @@
-module.exports = require('./lib/postita');
+module.exports = require('./lib/postita').Postita;
