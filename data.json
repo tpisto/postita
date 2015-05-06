@@ -23,7 +23,7 @@
             "extension_for": [],
             "file": "lib/postita.js",
             "line": 14,
-            "description": "Postita.fi class for utilize their API.\nTest that you can login to postita.fi web interface with the same credentials and reset the password if needed. Check the code examples and contact our support (info@postita.fi) if problem persists.",
+            "description": "Postita.fi class for utilize their API.\nTest that you can login to postita.fi web interface with the same credentials and reset the password if needed.",
             "is_constructor": 1,
             "params": [
                 {
