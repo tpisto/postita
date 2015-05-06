@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>lib/postita.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Postita.html">Postita</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: lib/postita.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+&#x27;use strict&#x27;;
+
+Object.defineProperty(exports, &#x27;__esModule&#x27;, {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i &lt; props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (&#x27;value&#x27; in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(&#x27;Cannot call a class as a function&#x27;); } }
+
+var rp = require(&#x27;request-promise&#x27;);
+exports.version = require(&#x27;../package&#x27;).version;
+
+/**
+* Postita.fi class for utilize their API.
+* Test that you can login to postita.fi web interface with the same credentials and reset the password if needed. Check the code examples and contact our support (info@postita.fi) if problem persists.
+*
+* @class Postita
+* @constructor
+* @param {String} user Your postita.fi username
+* @param {String} pass Your postita.fi password
+* @example
+* &#x60;&#x60;&#x60;
+* // ES6 example
+* let PostitaLib = require(&#x27;postita&#x27;)
+* let fs = require(&#x27;fs&#x27;)
+* 
+* // Init
+* let postita = new PostitaLib(&#x27;myuser&#x27;,&#x27;mypass123&#x27;)
+* 
+* // Send the file
+* let myPdf = fs.readFileSync(&#x27;mypdf.pdf&#x27;)
+* 
+* postita.send(&#x27;my-test-job-name&#x27;, myPdf)
+*   .then(r =&gt; console.log(&#x27;PDF sent successfully&#x27;))
+*   .catch(r =&gt; console.log(&#x60;PDF sending failed: ${r}&#x60;))
+* &#x60;&#x60;&#x60;
+*/
+
+var Postita = (function () {
+  function Postita(user, pass) {
+    _classCallCheck(this, Postita);
+
+    this.auth = { &#x27;auth&#x27;: { &#x27;user&#x27;: user, &#x27;pass&#x27;: pass } };
+    this.apiUrl = &#x27;https://postita.fi/api/&#x27;;
+  }
+
+  _createClass(Postita, [{
+    key: &#x27;send&#x27;,
+
+    /**
+    * Send is used to transmit PDF files to be printed and mailed through our service. Jobs sent through API are set automatically to ‘Confirmed’ status and will be sent automatically. Funds will be automatically reserved from user’s account when send is called, and they will be charged when the job is processed unless the job is cancelled before that.
+    * Note: All PDF files sent through this API call MUST contain address details already within them. The API has a separate call, send_with_address, that will add a cover page with a given address to the job.
+    * It is possible to receive monthly reports from our service that contain details about the customer’s use of our service. Some of our users (account agencies for example) want to resell our services to their clients and thus need multiple different reports. The argument report_group_id exists to accommodate this need. It is not normally required, but if you’re interested in this kind of functionality don’t hesitate to contact us.
+    *
+    * @method send
+    * @param {String} job_name The name of the job
+    * @param {Buffer} pdf Pdf file as Node.js Buffer object (returned from fs.readFile for example)
+    * @param {Object} optional Optional parameters
+    * @param {String} optional.report_group_id (optional) – The report group id that the job will be associated with.
+    * @param {Number} optional.post_class (optional) (int 1-4) – Post class: 1: 1 st. class, 2: 2nd. class, 3: 1st. class color, 4: 2nd. class color
+    * @param {Number} optional.pdf_splitter (optional) (int) – PDF-file will be splitted to seperate posts. Argument specifies the number of pages in each post.Example: PDF with 100 pages is sent to API with argument pdf_splitter=4. PDF is splitted to 25 separate posts with 4 pages each. (Original PDF should have an address data in the correct placement every four pages. Address placement instructions.)
+    * @return {Object} Returns Promise
+    */
+    value: function send(job_name, pdf) {
+      var optional = arguments[2] === undefined ? {} : arguments[2];
+
+      var options = {
+        uri: this.apiUrl + &#x27;send&#x27;,
+        method: &#x27;POST&#x27;
+      };
+      var form = { formData: { &#x27;job_name&#x27;: job_name, &#x27;pdf&#x27;: pdf.toString(&#x27;base64&#x27;) } };
+
+      Object.assign(form.formData, optional);
+      Object.assign(options, this.auth);
+      Object.assign(options, form);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;send_finvoice&#x27;,
+
+    /**
+    * Send is used to transmit PDF files to be printed and mailed through our service. Jobs sent through API are set automatically to ‘Confirmed’ status and will be sent automatically. Funds will be automatically reserved from user’s account when send is called, and they will be charged when the job is processed unless the job is cancelled before that.
+    * Note: All PDF files sent through this API call MUST contain address details already within them. The API has a separate call, send_with_address, that will add a cover page with a given address to the job.
+    * It is possible to receive monthly reports from our service that contain details about the customer’s use of our service. Some of our users (account agencies for example) want to resell our services to their clients and thus need multiple different reports. The argument report_group_id exists to accommodate this need. It is not normally required, but if you’re interested in this kind of functionality don’t hesitate to contact us.
+    *
+    * @method send
+    * @param {String} job_name The name of the job
+    * @param {Buffer} finvoicehe Finvoice XML file to be processed, encoded with urlsafe Base644 encoding.
+    * @param {Object} optional Optional parameters
+    * @param {Buffer} optional.invoice_pdf (optional) PDF version of the invoice. If invoice_pdf argument is not provided Postita will generate a PDF invoice from FinvoiceXML data. FinvoiceXML cannot include multpile invoices if ‘invoice_pdf’ argument is used.
+    * @param {Number} optional.confirm (optional) Job is confirmed automatically as default. Job is not automatically confirmed if string value “False” is provided as value.
+    * @return {Object} Returns Promise
+    */
+    value: function send_finvoice(job_name, finvoice) {
+      var optional = arguments[2] === undefined ? {} : arguments[2];
+
+      var options = {
+        uri: this.apiUrl + &#x27;send_finvoice&#x27;,
+        method: &#x27;POST&#x27;
+      };
+      var form = { formData: { &#x27;job_name&#x27;: job_name, &#x27;finvoice&#x27;: pdf.toString(&#x27;base64&#x27;) } };
+
+      Object.assign(form.formData, optional);
+      Object.assign(options, this.auth);
+      Object.assign(options, form);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;send_with_address&#x27;,
+
+    /**
+    * send_with_address is exactly like send, but with additional arguments for address details. A new blank page will be added to the front of the PDF with the address printed in correct place. This enables our users to easily send material that does not come with address overlaid.
+    * 
+    * The address arguments can be left empty, but it is always the user’s responsibility to make sure that a full address is included. Our international customers in particular need to make sure that the country line is always filled — Postita.fi is based in Finland and we need to know which country to send the mail to. It is highly recommended to validate these fields beforehand!
+    *   
+    * @method send_with_address
+    * @param {String} job_name The name of the job
+    * @param {Buffer} pdf Pdf file as Node.js Buffer object (returned from fs.readFile for example)
+    * @param {String} name1 First name line.
+    * @param {String} name2 Second name line.
+    * @param {String} address1 First address line.
+    * @param {String} address2 Second name line.
+    * @param {Object} optional Optional parameters
+    * @param {String} zipcity Line for zip / postal code and city / municipality.
+    * @param {String} country Country line.
+    * @param {String} optional.report_group_id (optional) – The report group id that the job will be associated with.
+    * @param {Number} optional.post_class (optional) (int 1-4) – Post class: 1: 1 st. class, 2: 2nd. class, 3: 1st. class color, 4: 2nd. class color
+    * @param {Number} optional.pdf_splitter (optional) (int) – PDF-file will be splitted to seperate posts. Argument specifies the number of pages in each post.Example: PDF with 100 pages is sent to API with argument pdf_splitter=4. PDF is splitted to 25 separate posts with 4 pages each. (Original PDF should have an address data in the correct placement every four pages. Address placement instructions.)
+    * @return {Object} Returns Promise
+    */
+    value: function send_with_address(job_name, pdf) {
+      var optional = arguments[2] === undefined ? {} : arguments[2];
+
+      var options = {
+        uri: this.apiUrl + &#x27;send_with_address&#x27;,
+        method: &#x27;POST&#x27;
+      };
+      var form = { formData: { &#x27;job_name&#x27;: job_name, &#x27;pdf&#x27;: pdf.toString(&#x27;base64&#x27;) } };
+
+      Object.assign(form.formData, optional);
+      Object.assign(options, this.auth);
+      Object.assign(options, form);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;confirm&#x27;,
+
+    /**
+    * confirm Conrfirms job to be sended at 11 o’clock next working day. Works on only for unconfirmed jobs (Postita API status code == NE).
+    *
+    * @method confirm
+    * @param {Number} job_id The id of the job to be confirmed. Value ‘all’ as job_id confirms all your mail.
+    * @return {Object} Returns JSON object.
+    *
+    * Error codes:
+    * 
+    * &#x60;&#x60;&#x60;
+    * 400: Bad Request – The job is not in new / unconfirmed state.
+    * 401: Unauthorized – Authentication failed.
+    * &#x60;&#x60;&#x60;
+    * 
+    * Example return:
+    * &#x60;&#x60;&#x60;
+    *   [
+    *     {
+    *       &quot;status&quot;: &quot;CO&quot;,
+    *       &quot;name&quot;: &quot;An example letter&quot;,
+    *       &quot;created&quot;: &quot;14.05.2008 12:54:01&quot;,
+    *       &quot;price&quot;: &quot;26.60&quot;,
+    *       &quot;total_pages&quot;: 270,
+    *       &quot;is_massmail&quot;: true,
+    *       &quot;recipient_count&quot;: 10
+    *     }
+    *   ]
+    * &#x60;&#x60;&#x60;
+    */
+    value: function confirm(job_id) {
+      var options = {
+        uri: &#x27;&#x27; + this.apiUrl + &#x27;account_info/&#x27; + job_id,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;delete&#x27;,
+
+    /**
+    * delete removes a job from the job queue. This will completely remove the job and the associated PDF file from our servers. Delete only works if the job is still waiting to be processed.
+    *
+    * @method delete
+    * @param {Number} job_id The id of the job to be deleted.
+    * @return {Object} Returns JSON object.
+    * 
+    * Error codes:
+    * &#x60;&#x60;&#x60;
+    * 400: Bad Request – The job is not in new / unconfirmed state.
+    * 401: Unauthorized – Authentication failed.
+    * &#x60;&#x60;&#x60;
+    */
+    value: function _delete(job_id) {
+      var options = {
+        uri: &#x27;&#x27; + this.apiUrl + &#x27;delete/&#x27; + job_id,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;account_info&#x27;,
+
+    /**
+    * account_info can be used to query account balance, possible credit limit and currently available funds. Currently available funds are calculated as balance minus the price of all current queued jobs.
+    *
+    * @method account_info
+    * @return {Object} Returns JSON object of balance, credit_limit, available_funds
+    */
+    value: function account_info() {
+      var options = {
+        uri: this.apiUrl + &#x27;account_info&#x27;,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;job_info&#x27;,
+
+    /**
+    * job_info can be used to query the status of an individual job.
+    *
+    * @method job_info
+    * @param {Number} job_id The id of the job to be queried.
+    * @return {Object} Returns JSON object.
+    *
+    * Error codes:
+    * 
+    * &#x60;&#x60;&#x60;
+    * 401: Unauthorized – Authentication failed.
+    * 404: Not Found – The job was not found.
+    * &#x60;&#x60;&#x60;
+    * 
+    * Example response:
+    * 
+    * &#x60;&#x60;&#x60;
+    *  {
+    *    &quot;status&quot;: &quot;NE&quot;,
+    *    &quot;name&quot;: &quot;An example letter&quot;,
+    *    &quot;created&quot;: &quot;14.05.2008 12:54:01&quot;,
+    *    &quot;price&quot;: &quot;26.60&quot;,
+    *    &quot;total_pages&quot;: 270,
+    *    &quot;is_massmail&quot;: true,
+    *    &quot;recipient_count&quot;: 10
+    *  }
+    * &#x60;&#x60;&#x60;
+    */
+    value: function job_info(job_id) {
+      var options = {
+        uri: &#x27;&#x27; + this.apiUrl + &#x27;job_info/&#x27; + job_id,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;job_list&#x27;,
+
+    /**
+    * job_list will return a list of all jobs associated with the querying user. It is possible to filter the returned jobs by specifying a date for the query with the optional created_mindate argument in the ‘DD.MM.YYYY’ format or specifying the status of the job as argument. Returns the same data as job_info inside a list.
+    *
+    * @method job_list
+    * @param filter Filter can be either JavaScript Date Object or status code. When using date the method will return all jobs created after a date. If using status code it retuns jobs with statuscode. Accepted values DR, NE, CO, CA, PR, SE. See Postita API status codes.
+    * @return {Object} Returns JSON object.
+    *
+    * Error codes:
+    * 
+    * &#x60;&#x60;&#x60;
+    * 400 Bad Request – Unrecognized format used in send_mindate argument.
+    * 401: Unauthorized – Authentication failed.
+    * &#x60;&#x60;&#x60;
+    * 
+    * Example response:
+    * 
+    * &#x60;&#x60;&#x60;
+    * [
+    *     {
+    *         &quot;status&quot;: &quot;SE&quot;
+    *         &quot;price&quot;: &quot;0.59&quot;
+    *         &quot;total_pages&quot;: 1
+    *         &quot;recipient_count&quot;: 1
+    *         &quot;is_massmail&quot;: false
+    *         &quot;id&quot;: 673368
+    *         &quot;vat_price&quot;: &quot;0.73&quot;
+    *         &quot;name&quot;: &quot;Testipostitus (verkkolasku)&quot;
+    *         &quot;created&quot;: &quot;19.09.2011 14:22:30&quot;
+    *         &quot;pdf_splitter&quot;: &quot;&quot;
+    *         &quot;special_set&quot;: &quot;&quot;
+    *         &quot;is_einvoice&quot;: true
+    *         &quot;sent&quot;: &quot;19.09.2011 14:25:27&quot;
+    *     },
+    *     {
+    *         &quot;price&quot;: &quot;9.79&quot;
+    *         &quot;status&quot;: &quot;DR&quot;
+    *         &quot;name&quot;: &quot;Testimassapostitus (luonnos)&quot;
+    *         &quot;is_einvoice&quot;: false
+    *         &quot;created&quot;: &quot;15.10.2009 12:19:07&quot;
+    *         &quot;pdf_splitter&quot;: &quot;&quot;
+    *         &quot;special_set&quot;: &quot;&quot;
+    *         &quot;recipient_count&quot;: 11
+    *         &quot;total_pages&quot;: 11
+    *         &quot;id&quot;: 135140
+    *         &quot;vat_price&quot;: &quot;12.04&quot;
+    *         &quot;is_massmail&quot;: true
+    *     }
+    * ]
+    * &#x60;&#x60;&#x60;
+    */
+    value: function job_list(filter) {
+
+      var myFilter = filter;
+      if (filter instanceof Date) {
+        myFilter = this.formatDate(myFilter);
+      }
+      var options = {
+        uri: &#x27;&#x27; + this.apiUrl + &#x27;job_info/&#x27; + myFilter,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;job_pdf&#x27;,
+
+    /**
+    * job_pdf can be used to fetch the original PDF file of a job.
+    *
+    * @method job_pdf
+    * @param {Number} job_id The id of the job to be fetched.
+    * @return {Object} Returns JSON object.
+    * 
+    * Error codes:
+    * &#x60;&#x60;&#x60;
+    * 401: Unauthorized – Authentication failed.
+    * 404: Not Found – The job was not found.
+    * &#x60;&#x60;&#x60;
+    */
+    value: function job_pdf(job_id) {
+      var options = {
+        uri: &#x27;&#x27; + this.apiUrl + &#x27;job_pdf/&#x27; + job_id,
+        method: &#x27;GET&#x27;
+      };
+      Object.assign(options, this.auth);
+
+      return rp(options);
+    }
+  }, {
+    key: &#x27;formatDate&#x27;,
+
+    // Helper method
+    value: function formatDate(date) {
+      var month = &#x27;&#x27; + (date.getMonth() + 1),
+          day = &#x27;&#x27; + date.getDate(),
+          year = date.getFullYear();
+
+      if (month.length &lt; 2) month = &#x27;0&#x27; + month;
+      if (day.length &lt; 2) day = &#x27;0&#x27; + day;
+
+      return [day, month, year].join(&#x27;.&#x27;);
+    }
+  }]);
+
+  return Postita;
+})();
+
+exports.Postita = Postita;
+//# sourceMappingURL=postita.js.map
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+{
+    "project": {},
+    "files": {
+        "lib/postita.js": {
+            "name": "lib/postita.js",
+            "modules": {},
+            "classes": {
+                "Postita": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "Postita": {
+            "name": "Postita",
+            "shortname": "Postita",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "lib/postita.js",
+            "line": 14,
+            "description": "Postita.fi class for utilize their API.\nTest that you can login to postita.fi web interface with the same credentials and reset the password if needed. Check the code examples and contact our support (info@postita.fi) if problem persists.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "user",
+                    "description": "Your postita.fi username",
+                    "type": "String"
+                },
+                {
+                    "name": "pass",
+                    "description": "Your postita.fi password",
+                    "type": "String"
+                }
+            ],
+            "example": [
+                "\n```\n// ES6 example\nlet PostitaLib = require('postita')\nlet fs = require('fs')\n\n// Init\nlet postita = new PostitaLib('myuser','mypass123')\n\n// Send the file\nlet myPdf = fs.readFileSync('mypdf.pdf')\n\npostita.send('my-test-job-name', myPdf)\n  .then(r => console.log('PDF sent successfully'))\n  .catch(r => console.log(`PDF sending failed: ${r}`))\n```"
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "lib/postita.js",
+            "line": 51,
+            "description": "Send is used to transmit PDF files to be printed and mailed through our service. Jobs sent through API are set automatically to ‘Confirmed’ status and will be sent automatically. Funds will be automatically reserved from user’s account when send is called, and they will be charged when the job is processed unless the job is cancelled before that.\nNote: All PDF files sent through this API call MUST contain address details already within them. The API has a separate call, send_with_address, that will add a cover page with a given address to the job.\nIt is possible to receive monthly reports from our service that contain details about the customer’s use of our service. Some of our users (account agencies for example) want to resell our services to their clients and thus need multiple different reports. The argument report_group_id exists to accommodate this need. It is not normally required, but if you’re interested in this kind of functionality don’t hesitate to contact us.",
+            "itemtype": "method",
+            "name": "send",
+            "params": [
+                {
+                    "name": "job_name",
+                    "description": "The name of the job",
+                    "type": "String"
+                },
+                {
+                    "name": "pdf",
+                    "description": "Pdf file as Node.js Buffer object (returned from fs.readFile for example)",
+                    "type": "Buffer"
+                },
+                {
+                    "name": "optional",
+                    "description": "Optional parameters",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "report_group_id",
+                            "description": "(optional) – The report group id that the job will be associated with.",
+                            "type": "String"
+                        },
+                        {
+                            "name": "post_class",
+                            "description": "(optional) (int 1-4) – Post class: 1: 1 st. class, 2: 2nd. class, 3: 1st. class color, 4: 2nd. class color",
+                            "type": "Number"
+                        },
+                        {
+                            "name": "pdf_splitter",
+                            "description": "(optional) (int) – PDF-file will be splitted to seperate posts. Argument specifies the number of pages in each post.Example: PDF with 100 pages is sent to API with argument pdf_splitter=4. PDF is splitted to 25 separate posts with 4 pages each. (Original PDF should have an address data in the correct placement every four pages. Address placement instructions.)",
+                            "type": "Number"
+                        }
+                    ]
+                }
+            ],
+            "return": {
+                "description": "Returns Promise",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 83,
+            "description": "Send is used to transmit PDF files to be printed and mailed through our service. Jobs sent through API are set automatically to ‘Confirmed’ status and will be sent automatically. Funds will be automatically reserved from user’s account when send is called, and they will be charged when the job is processed unless the job is cancelled before that.\nNote: All PDF files sent through this API call MUST contain address details already within them. The API has a separate call, send_with_address, that will add a cover page with a given address to the job.\nIt is possible to receive monthly reports from our service that contain details about the customer’s use of our service. Some of our users (account agencies for example) want to resell our services to their clients and thus need multiple different reports. The argument report_group_id exists to accommodate this need. It is not normally required, but if you’re interested in this kind of functionality don’t hesitate to contact us.",
+            "itemtype": "method",
+            "name": "send",
+            "params": [
+                {
+                    "name": "job_name",
+                    "description": "The name of the job",
+                    "type": "String"
+                },
+                {
+                    "name": "finvoicehe",
+                    "description": "Finvoice XML file to be processed, encoded with urlsafe Base644 encoding.",
+                    "type": "Buffer"
+                },
+                {
+                    "name": "optional",
+                    "description": "Optional parameters",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "invoice_pdf",
+                            "description": "(optional) PDF version of the invoice. If invoice_pdf argument is not provided Postita will generate a PDF invoice from FinvoiceXML data. FinvoiceXML cannot include multpile invoices if ‘invoice_pdf’ argument is used.",
+                            "type": "Buffer"
+                        },
+                        {
+                            "name": "confirm",
+                            "description": "(optional) Job is confirmed automatically as default. Job is not automatically confirmed if string value “False” is provided as value.",
+                            "type": "Number"
+                        }
+                    ]
+                }
+            ],
+            "return": {
+                "description": "Returns Promise",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 114,
+            "description": "send_with_address is exactly like send, but with additional arguments for address details. A new blank page will be added to the front of the PDF with the address printed in correct place. This enables our users to easily send material that does not come with address overlaid.\n\nThe address arguments can be left empty, but it is always the user’s responsibility to make sure that a full address is included. Our international customers in particular need to make sure that the country line is always filled — Postita.fi is based in Finland and we need to know which country to send the mail to. It is highly recommended to validate these fields beforehand!",
+            "itemtype": "method",
+            "name": "send_with_address",
+            "params": [
+                {
+                    "name": "job_name",
+                    "description": "The name of the job",
+                    "type": "String"
+                },
+                {
+                    "name": "pdf",
+                    "description": "Pdf file as Node.js Buffer object (returned from fs.readFile for example)",
+                    "type": "Buffer"
+                },
+                {
+                    "name": "name1",
+                    "description": "First name line.",
+                    "type": "String"
+                },
+                {
+                    "name": "name2",
+                    "description": "Second name line.",
+                    "type": "String"
+                },
+                {
+                    "name": "address1",
+                    "description": "First address line.",
+                    "type": "String"
+                },
+                {
+                    "name": "address2",
+                    "description": "Second name line.",
+                    "type": "String"
+                },
+                {
+                    "name": "optional",
+                    "description": "Optional parameters",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "report_group_id",
+                            "description": "(optional) – The report group id that the job will be associated with.",
+                            "type": "String"
+                        },
+                        {
+                            "name": "post_class",
+                            "description": "(optional) (int 1-4) – Post class: 1: 1 st. class, 2: 2nd. class, 3: 1st. class color, 4: 2nd. class color",
+                            "type": "Number"
+                        },
+                        {
+                            "name": "pdf_splitter",
+                            "description": "(optional) (int) – PDF-file will be splitted to seperate posts. Argument specifies the number of pages in each post.Example: PDF with 100 pages is sent to API with argument pdf_splitter=4. PDF is splitted to 25 separate posts with 4 pages each. (Original PDF should have an address data in the correct placement every four pages. Address placement instructions.)",
+                            "type": "Number"
+                        }
+                    ]
+                },
+                {
+                    "name": "zipcity",
+                    "description": "Line for zip / postal code and city / municipality.",
+                    "type": "String"
+                },
+                {
+                    "name": "country",
+                    "description": "Country line.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "Returns Promise",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 152,
+            "description": "confirm Conrfirms job to be sended at 11 o’clock next working day. Works on only for unconfirmed jobs (Postita API status code == NE).",
+            "itemtype": "method",
+            "name": "confirm",
+            "params": [
+                {
+                    "name": "job_id",
+                    "description": "The id of the job to be confirmed. Value ‘all’ as job_id confirms all your mail.",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns JSON object.\n\nError codes:\n\n```\n400: Bad Request – The job is not in new / unconfirmed state.\n401: Unauthorized – Authentication failed.\n```\n\nExample return:\n```\n  [\n    {\n      \"status\": \"CO\",\n      \"name\": \"An example letter\",\n      \"created\": \"14.05.2008 12:54:01\",\n      \"price\": \"26.60\",\n      \"total_pages\": 270,\n      \"is_massmail\": true,\n      \"recipient_count\": 10\n    }\n  ]\n```",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 193,
+            "description": "delete removes a job from the job queue. This will completely remove the job and the associated PDF file from our servers. Delete only works if the job is still waiting to be processed.",
+            "itemtype": "method",
+            "name": "delete",
+            "params": [
+                {
+                    "name": "job_id",
+                    "description": "The id of the job to be deleted.",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns JSON object.\n\nError codes:\n```\n400: Bad Request – The job is not in new / unconfirmed state.\n401: Unauthorized – Authentication failed.\n```",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 218,
+            "description": "account_info can be used to query account balance, possible credit limit and currently available funds. Currently available funds are calculated as balance minus the price of all current queued jobs.",
+            "itemtype": "method",
+            "name": "account_info",
+            "return": {
+                "description": "Returns JSON object of balance, credit_limit, available_funds",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 236,
+            "description": "job_info can be used to query the status of an individual job.",
+            "itemtype": "method",
+            "name": "job_info",
+            "params": [
+                {
+                    "name": "job_id",
+                    "description": "The id of the job to be queried.",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns JSON object.\n\nError codes:\n\n```\n401: Unauthorized – Authentication failed.\n404: Not Found – The job was not found.\n```\n\nExample response:\n\n```\n {\n   \"status\": \"NE\",\n   \"name\": \"An example letter\",\n   \"created\": \"14.05.2008 12:54:01\",\n   \"price\": \"26.60\",\n   \"total_pages\": 270,\n   \"is_massmail\": true,\n   \"recipient_count\": 10\n }\n```",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 276,
+            "description": "job_list will return a list of all jobs associated with the querying user. It is possible to filter the returned jobs by specifying a date for the query with the optional created_mindate argument in the ‘DD.MM.YYYY’ format or specifying the status of the job as argument. Returns the same data as job_info inside a list.",
+            "itemtype": "method",
+            "name": "job_list",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "Filter can be either JavaScript Date Object or status code. When using date the method will return all jobs created after a date. If using status code it retuns jobs with statuscode. Accepted values DR, NE, CO, CA, PR, SE. See Postita API status codes."
+                }
+            ],
+            "return": {
+                "description": "Returns JSON object.\n\nError codes:\n\n```\n400 Bad Request – Unrecognized format used in send_mindate argument.\n401: Unauthorized – Authentication failed.\n```\n\nExample response:\n\n```\n[\n    {\n        \"status\": \"SE\"\n        \"price\": \"0.59\"\n        \"total_pages\": 1\n        \"recipient_count\": 1\n        \"is_massmail\": false\n        \"id\": 673368\n        \"vat_price\": \"0.73\"\n        \"name\": \"Testipostitus (verkkolasku)\"\n        \"created\": \"19.09.2011 14:22:30\"\n        \"pdf_splitter\": \"\"\n        \"special_set\": \"\"\n        \"is_einvoice\": true\n        \"sent\": \"19.09.2011 14:25:27\"\n    },\n    {\n        \"price\": \"9.79\"\n        \"status\": \"DR\"\n        \"name\": \"Testimassapostitus (luonnos)\"\n        \"is_einvoice\": false\n        \"created\": \"15.10.2009 12:19:07\"\n        \"pdf_splitter\": \"\"\n        \"special_set\": \"\"\n        \"recipient_count\": 11\n        \"total_pages\": 11\n        \"id\": 135140\n        \"vat_price\": \"12.04\"\n        \"is_massmail\": true\n    }\n]\n```",
+                "type": "Object"
+            },
+            "class": "Postita"
+        },
+        {
+            "file": "lib/postita.js",
+            "line": 343,
+            "description": "job_pdf can be used to fetch the original PDF file of a job.",
+            "itemtype": "method",
+            "name": "job_pdf",
+            "params": [
+                {
+                    "name": "job_id",
+                    "description": "The id of the job to be fetched.",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns JSON object.\n\nError codes:\n```\n401: Unauthorized – Authentication failed.\n404: Not Found – The job was not found.\n```",
+                "type": "Object"
+            },
+            "class": "Postita"
+        }
+    ],
+    "warnings": []
+}
