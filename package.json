@@ -9,8 +9,7 @@
   "author": "Tommi Pisto",
   "license": "ISC",
   "dependencies": {
-    "request-promise": "^0.4.2",
-    "urlsafe-base64": "^1.0.0"
+    "request-promise": "^0.4.2"
   },
   "devDependencies": {
     "gulp-babel": "^5.1.0",
