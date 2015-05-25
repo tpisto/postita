@@ -1,4 +1,6 @@
 let rp = require('request-promise');
+require("babel/polyfill");
+
 exports.version = require('../package').version;
 
 /**

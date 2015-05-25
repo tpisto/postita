@@ -1,6 +1,6 @@
 {
   "name": "postita",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Postita.fi unofficial Node.js API",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,11 @@
   "author": "Tommi Pisto",
   "license": "ISC",
   "dependencies": {
+    "babel": "^5.4.7",
     "request-promise": "^0.4.2"
   },
   "devDependencies": {
+    "babel-plugin-object-assign": "^1.1.0",
     "gulp-babel": "^5.1.0",
     "gulp-concat": "^2.5.2",
     "gulp-sourcemaps": "^1.5.2",
